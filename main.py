@@ -6,6 +6,11 @@ DEFULT_BREAK_MINUTES = 5
 
 
 def parse_params():
+    """parse cmd params
+
+    Returns:
+        tuple: (work minutes, rest minutes)
+    """
     name = 'tomato.py'
     parse = argparse.ArgumentParser(prog=name, usage=f'{name} [options]', description='tomato worker, Ctrl+C to exit')
     parse.add_argument(
@@ -19,25 +24,34 @@ def parse_params():
 
 
 def tomato_worker():
+    """main
+    """
     minutes, rest = parse_params()
-    print(f'>>>tomato worker：start a {minutes} 🍅 minutes and rest a {rest} ♨️  minutes')
+    print(f'>>>tomato worker：start {minutes} 🍅 minutes and rest {rest} ♨️  minutes')
     start_time = time.perf_counter()
     while True:
-        diff_seconds = int(round(time.perf_counter() - start_time))
-        left_seconds = minutes * 60 - diff_seconds
+        duration_seconds = int(round(time.perf_counter() - start_time))
+        left_seconds = minutes * 60 - duration_seconds
         if left_seconds <= 0:
             print('\n🎉😄🎆 congratulations to you become tomato worker')
             break
 
-        count_down = '{}:{} ⏰'.format(int(left_seconds / 60), int(left_seconds % 60))
-        console_progress_bar(diff_seconds, minutes, count_down)
+        count_down = '{}:{}⏰'.format(int(left_seconds / 60), int(left_seconds % 60))
+        console_progress_bar(duration_seconds, minutes, count_down)
         time.sleep(1)
 
 
-def console_progress_bar(diff_seconds, minutes, extra=''):
-    frac = diff_seconds / (minutes * 60)
+def console_progress_bar(duration_seconds, minutes, count_down):
+    """print progress bar
+
+    Args:
+        duration_seconds (int): duration secends
+        minutes (tomato work minutes): tomato work minutes
+        count_down (string): count down
+    """
+    frac = duration_seconds / (minutes * 60)
     filled = round(frac * minutes)
-    print('\r', '🍅' * filled + '--' * (minutes - filled), '[{:.0%}]'.format(frac), extra, end='')
+    print('\r', '🍅' * filled + '--' * (minutes - filled), '[{:.0%}]'.format(frac), count_down, end='')
 
 
 def notify():
